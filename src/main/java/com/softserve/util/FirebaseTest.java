@@ -10,15 +10,12 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -47,39 +44,42 @@ public class FirebaseTest {
 		try {
 			return upload(multipartFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new String[]{"Success"};
 		}
 	}
 
 	private String[] upload(MultipartFile multipartFile) throws IOException {
-        FileInputStream serviceAccount =
-                new FileInputStream(serviceAccountKey);
-        
-        this.storageOptions = StorageOptions.newBuilder()
-				                .setProjectId(projectId)
-				                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-				                .build();
-        
-        
-        File file_ = convertMultiPartToFile(multipartFile);
-        Path filePath = file_.toPath();
-        String objectName = generateFileName(multipartFile);
-        Storage storage = storageOptions.getService();
+		final String FILE_URL = "fileUrl";
+		
+		FileInputStream serviceAccount = new FileInputStream(serviceAccountKey);
 
-        BlobId blobId = BlobId.of(bucketName, objectName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(multipartFile.getContentType()).build();
-        storage.create(blobInfo, Files.readAllBytes(filePath));
-        file_.delete();
-        return new String[]{"fileUrl", objectName};
+		this.storageOptions = StorageOptions.newBuilder().setProjectId(projectId)
+							 .setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+
+		File file = convertMultiPartToFile(multipartFile);
+		Path filePath = file.toPath();
+		
+		String objectName = generateFileName(multipartFile);
+		Storage storage = storageOptions.getService();
+
+		BlobId blobId = BlobId.of(bucketName, objectName);
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(multipartFile.getContentType()).build();
+		
+		storage.create(blobInfo, Files.readAllBytes(filePath));
+		
+		file.delete();
+		return new String[] { FILE_URL, objectName };
 	}
 
 	private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+        
+		File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         FileOutputStream fos = new FileOutputStream(convertedFile);
+        
         fos.write(file.getBytes());
         fos.close();
+        
         return convertedFile;
     }
 	
