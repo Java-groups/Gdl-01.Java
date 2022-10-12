@@ -22,11 +22,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Service
 public class UserServices implements UserDetailsService {
 
-    
+
 	/*@Autowired
     private BCryptPasswordEncoder encoder;*/
     
