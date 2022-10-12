@@ -1,6 +1,7 @@
 package com.softserve.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,12 +14,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.softserve.security.user.UserServices;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-	
 	@Autowired
 	private UserServices userServices;
 
