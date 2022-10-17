@@ -20,7 +20,7 @@ public class SubCategoryService {
 
 	public void loadContentMain(Model model) {
 
-		List<Category> listCategories = this.categoryService.findAll();
+		List<Category> listCategories = this.categoryService.findByIdParentCategoryIsNull();
 
 
 		List<CategoryDTO> categoriesDtos = listCategories.stream().map(category -> {

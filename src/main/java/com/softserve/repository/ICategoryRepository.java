@@ -9,9 +9,14 @@ import com.softserve.model.Category;
 
 @Repository
 public interface ICategoryRepository extends JpaRepository<Category, Integer> {
-	//Custom query for searching main categories or parent categories
+	/*
+	 * Custom query for searching main categories or parent categories
+	 */
 	List<Category> findByIdParentCategoryIsNull();
-	//Custom query for searching subCategories
+
+	/*
+	 * Custom query for searching subCategories
+	 */
 	List<Category> findByIdParentCategory(Integer idParentCategory);
 
 }
