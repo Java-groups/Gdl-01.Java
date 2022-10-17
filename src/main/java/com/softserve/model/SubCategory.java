@@ -1,11 +1,16 @@
 package com.softserve.model;
 
 import java.sql.Timestamp;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +31,7 @@ public class SubCategory {
 	private String name;
 	
 	@Column(name = "description")
-	private Integer description;
+	private String description;
 	
 	@Column(name = "id_parent_category")
 	private Integer idParentCategory;
@@ -42,5 +47,8 @@ public class SubCategory {
 	
 	@Column(name = "modification_date")
 	private Timestamp modificationDate;
+
+	@ManyToMany(mappedBy = "articles", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	List<Article> listArticles;
 	
 }
