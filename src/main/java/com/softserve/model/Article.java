@@ -1,16 +1,16 @@
 package com.softserve.model;
 
 import java.sql.Timestamp;
-import java.util.List;
-
-
 import javax.persistence.*;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * @author Luis Ábrego
+ * Entity for Article table
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,12 +45,12 @@ public class Article {
     @Column ( name = "modification_date")
     private Timestamp modificationDate;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    /*@ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
         name = "article_category", 
         joinColumns = { @JoinColumn(name = "id_article") }, 
         inverseJoinColumns = { @JoinColumn(name = "id_category") }
     )
-    private List<Category> listCategories;
+    private List<Category> listCategories;*/
     
 }

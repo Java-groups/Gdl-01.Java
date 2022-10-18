@@ -11,6 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * @author José Castellanos
+ * Entity for Category table
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
