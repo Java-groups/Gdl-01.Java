@@ -1,6 +1,6 @@
 # Compiled class file
 *.class
-
+*.env
 # Log file
 *.log
 
@@ -55,3 +55,4 @@ build/
 
 ### VS Code ###
 .vscode/
+*.env
