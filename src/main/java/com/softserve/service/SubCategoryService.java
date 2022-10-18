@@ -3,6 +3,7 @@ package com.softserve.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import com.softserve.dto.CategoryDTO;
@@ -16,14 +17,11 @@ import com.softserve.repository.SportHubDatabaseRepository;
 @Service
 public class SubCategoryService {
 
+	@Autowired
 	private CategoryService categoryService;
 	
+	@Autowired
 	private SportHubDatabaseRepository databaseRepository;
-
-	public SubCategoryService(CategoryService categoryService, SportHubDatabaseRepository databaseRepository) {
-		this.categoryService = categoryService;
-		this.databaseRepository = databaseRepository;
-	}
 
 	/**
 	 * This method will load the main content for home page

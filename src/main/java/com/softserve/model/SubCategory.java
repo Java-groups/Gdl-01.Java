@@ -47,8 +47,5 @@ public class SubCategory {
 	
 	@Column(name = "modification_date")
 	private Timestamp modificationDate;
-
-	/*@ManyToMany(mappedBy = "articles", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	List<Article> listArticles;*/
 	
 }

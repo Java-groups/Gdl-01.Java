@@ -13,8 +13,8 @@ public interface SportHubDatabaseRepository {
 
 	/**
 	 * 
-	 * @param idCategoria 
+	 * @param categoryId 
 	 * @return List of the Articles ArticleDTO
 	 */
-	List<ArticleDTO> findArticlesFromCategories(Integer idCategoria);
+	List<ArticleDTO> findArticlesFromCategories(Integer categoryId);
 }

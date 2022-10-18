@@ -38,7 +38,6 @@ public class SportHubDatabaseRepositoryImpl implements SportHubDatabaseRepositor
 
 			@Override
 			public ArticleDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-				// ac.id_article , c.id_category , c.category_type , a.title
 				ArticleDTO articleDTO = new ArticleDTO();
 				articleDTO.setIdArticle(rs.getInt("id_article"));
 				articleDTO.setIdCategory(rs.getInt("id_category"));
