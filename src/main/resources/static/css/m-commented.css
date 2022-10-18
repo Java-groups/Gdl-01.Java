@@ -1,0 +1,252 @@
+*{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+body{
+  text-align: center;
+  font-family: sans-serif;   
+}
+
+.head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 63px;
+  background: red;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+.navbar{
+  display: flex;
+  margin-right: 10px;
+}
+
+.logo{
+  margin-left: 10px;
+}
+
+.logo a { 
+
+  display: block;
+  padding: 20px 23px;
+  color: #fff;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+.logo a:hover{
+  color: #fff;
+  background: rgba(233, 70, 70, 0.966);
+  border: rgba(233, 70, 70, 0.966);
+   
+}
+
+.prev{
+  display: inline-block;
+  margin-top: 20px;
+  color: red;
+  text-decoration: none;
+  position: relative;
+  left: 400px;
+}
+.prev2{
+  display: inline-block;
+  margin-top: 20px;
+  color: red;
+  text-decoration: none;
+  position: relative;
+  left: -400px;
+}
+.button{
+  display: inline-block;
+  margin-top: 20px;
+  color: #a39a9a;
+  text-decoration: none;
+  position: relative;
+  left: 400px;
+}
+
+.sel1{
+  display: inline-block;
+  margin-top: 20px;
+  color: #2b2828;;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid #a39a9a;
+  height: 2rem;
+  width: 20rem;
+  left: 50px;
+}
+.sel2{
+  display: inline-block;
+  margin-top: 20px;
+  color: #2b2828;;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid #a39a9a;
+  height: 2rem;
+  width: 20rem;
+  left: 120px;
+}
+.sel3{
+  display: inline-block;
+  margin-top: 20px;
+  color: #2b2828;;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid #a39a9a;
+  height: 2rem;
+  width: 20rem;
+  right: 50px;
+}
+.sel4{
+  display: inline-block;
+  margin-top: 20px;
+  color: #2b2828;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid #a39a9a;
+  height: 2rem;
+  width: 50rem;
+  right: 50px;
+}
+.header{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
+.header{
+  margin-bottom: auto;
+  height: 60vh !important;
+  background: url(static/img/header.jpg) no-repeat center;
+  background-size: cover;
+}
+
+hr.class-1 {
+  width: 100%;
+  border-top: 1px solid #a39a9a;
+}
+
+.title{
+  position: relative;
+  margin-bottom: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  width: 20rem;
+  border: 2px solid white;
+  color: black;
+  background: #fff;
+}
+
+p{
+  margin-bottom: 40px;
+  font-size: 18px;
+  padding: 0 100px;
+}
+.section{
+  display: inline-block;
+  padding: 10px 100px;
+  color: red;
+  text-decoration: none;
+}
+.btn{
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 40px;
+  border: 2px solid red;
+  color: red;
+  text-decoration: none;
+  background: #fff;
+}
+
+.btn:hover{
+  color: #fff;
+  background: rgba(233, 70, 70, 0.966);
+  border: rgba(233, 70, 70, 0.966);
+}
+.btn-home{
+  display: flex;
+}
+
+.btn-home a{
+  margin: 0 10px;
+}
+
+.content{
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sau{
+  padding: 4px;
+  background: #fff;
+  border: #fff;
+}
+
+.box-container{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.box-container .box{
+  height: 11rem;
+  width: 17rem;
+  background: #101010;
+  text-align: center;
+  border-radius: 1rem;
+  box-shadow: 0 .3rem 5rem rgb(0, 0,0,.5);
+  margin: 2rem;
+}
+
+.box-container .box i{
+  height: 3rem;
+  width: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #9c27b0;
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.box-container .box h3{
+  font-size: 20px;
+  color: #9c27b0;
+}
+
+.box-container .box p{
+  padding: 0 15px;
+  font-size: 16px;
+}
+
+.about{
+  background: #171717;
+}
+
+.price{
+  background: url(img/costos.jpg) no-repeat center;
+  background-attachment: fixed;
+  background-size: cover;
+  text-align: center;
+}
+
+.contact{
+  padding-top: 20px;
+  background: #171717;
+  padding-bottom: 0;
+}
