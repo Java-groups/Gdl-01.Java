@@ -11,4 +11,11 @@ public class ArticleController {
 	public String newArticle(Model model) {
 		return "article/new-article";
 	}
+	        
+    @GetMapping("/article")
+    public String getArticles(Model model){
+    	return "article/most-popular"; 
+    }
+
+
 }
