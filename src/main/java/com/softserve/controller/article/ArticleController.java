@@ -1,5 +1,6 @@
 package com.softserve.controller.article;
 
+import com.softserve.util.HtmlTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,13 +25,13 @@ public class ArticleController {
 	@GetMapping("/article/new")
 	public String newArticle(Model model, @ModelAttribute("article") NewArticleDTO newArticleDTO) {
 		this.articleService.loadNewArticleContent(model, newArticleDTO);
-		return "article/new-article";
+		return HtmlTemplate.ARTICLE_NEW_ARTICLE;
 	}
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/article/new")
 	public String newArticleSave(Model model, @ModelAttribute("article") NewArticleDTO newArticleDTO) {
 		this.articleService.saveArticle(model, newArticleDTO);
-		return "article/new-article";
+		return HtmlTemplate.ARTICLE_NEW_ARTICLE;
 	}
 }

@@ -1,6 +1,7 @@
 package com.softserve.controller.home;
 
 import com.softserve.dto.UserDTO;
+import com.softserve.util.HtmlTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,19 +43,19 @@ public class HomeController {
 	
 	@GetMapping("/forgot-password")
 	public String forgotPassword(@ModelAttribute("forgotPassword") ForgotPasswordDT forgotPasswordDT, Model model) {
-		return "welcome/forgot-password";
+		return HtmlTemplate.WELCOME_FORGOT_PASSWORD;
 	}
 	
 	@PostMapping("/forgot-password")
 	public String restartPassword(@ModelAttribute("forgotPassword") ForgotPasswordDT forgotPasswordDT, Model model) {
 		this.userServices.forgotPasswordProcess(forgotPasswordDT, model);
-		return "welcome/forgot-password";
+		return HtmlTemplate.WELCOME_FORGOT_PASSWORD;
 	}
 
 	@GetMapping("/forgot-password/recovery")
 	public String codeVerification(@RequestParam(name = "id", required = false) int id, Model model, @ModelAttribute("code") CodeVerificationDTO codeVerificationDTO) {
 		this.userServices.verificationCodeProcess(id, model);
-		return "welcome/code-verification";
+		return HtmlTemplate.WELCOME_CODE_VERIFICATION;
 	}
 	
 	@PostMapping("/forgot-password/recovery")
@@ -70,7 +71,7 @@ public class HomeController {
 	@PostMapping("/reset-password")
 	public String resetPasswordSave(Model model, @ModelAttribute("resetPassword") ResetPasswordDTO resetPasswordDTO, @RequestParam(name = "id", required = false) int idUser) {
 		this.userServices.saveNewPasswordProcess(model, resetPasswordDTO, idUser);
-		return "welcome/reset-password";
+		return HtmlTemplate.WELCOME_RESET_PASSWORD;
 	}
 	
 	@GetMapping("/start")
