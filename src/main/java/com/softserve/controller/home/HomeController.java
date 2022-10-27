@@ -81,6 +81,7 @@ public class HomeController {
 	@GetMapping("/homeArticle")
 	public String homeArticle(Model model) {
 		this.categoriesService.loadContentMain(model);
+		this.articleService.loadTop3Popular(model);
 		return "index";
 	}
 	

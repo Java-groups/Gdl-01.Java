@@ -1,5 +1,6 @@
 package com.softserve.controller.article;
 
+import com.softserve.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,8 @@ public class ArticleController {
 
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private CategoryService categoryService;
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/article/new")
