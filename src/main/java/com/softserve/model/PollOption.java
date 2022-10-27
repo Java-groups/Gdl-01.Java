@@ -1,5 +1,6 @@
 package com.softserve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "poll_option")
 @Getter @Setter
-@ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PollOption {
     @Id
     @Column(name = "id_poll_option")
@@ -22,7 +23,7 @@ public class PollOption {
     @Column(name = "poll_order")
     private Integer order;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_poll")
     private Poll poll;
 }

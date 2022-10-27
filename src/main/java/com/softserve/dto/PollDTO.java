@@ -1,6 +1,7 @@
 package com.softserve.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,28 +11,23 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @ToString
+@Getter @Setter
 public class PollDTO implements Serializable {
-    @Getter @Setter
-    private Long id;
+    @JsonProperty("idPoll")
+    private Integer id;
 
-    @Getter @Setter
     private String question;
 
-    @Getter @Setter
     private Integer userId;
 
-    @Getter @Setter
-    private Integer status;
-
-    @Getter @Setter @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Timestamp closedDate;
-
-    @Getter @Setter @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp creationDate;
 
-    @Getter @Setter @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp modificationDate;
 
-    @Getter @Setter
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Timestamp closedDate;
+
     private Set<PollOptionDTO> pollOptions;
 }
