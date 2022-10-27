@@ -15,6 +15,8 @@ import javax.mail.MessagingException;
 
 import com.softserve.dto.UserDTO;
 import com.softserve.exceptions.UserException;
+import com.softserve.util.HtmlTemplate;
+import com.softserve.util.ThymeleafAttributes;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,18 +62,51 @@ public class UserServices implements UserDetailsService {
 	@Autowired
 	private RequestService requestService;
 	
-	private String TEMPLATE_FORGOT_PASSWORD;
+	private final String TEMPLATE_FORGOT_PASSWORD;
 	
-	private String URL_RECOVERY_PASSWORD;
-	
-	
-	
-	
+	private final String URL_RECOVERY_PASSWORD;
+	private final String emailNotSent;
+	private final String forgotPasswordWrong;
+	private final String emailNotFound;
+	private final String codeNotFound;
+	private final String tokenWrong;
+	private final String codeExpired;
+	private final String codeIncorrect;
+	private final String accountCreated;
+	private final String passwordRestored;
+	private final String emailSent;
+
+
 	public UserServices(@Value("${template.forgot-password}") String TEMPLATE_FORGOT_PASSWORD,
 						@Value("${spring.mail.username}") String EMAIL_USERNAME,
-						@Value("${custom-url.recovery-password}") String URL_RECOVERY_PASSWORD) {
+						IUserRepository userRepository, EmailService emailService, TokenService tokenService, RequestService requestService, @Value("${custom-url.recovery-password}") String URL_RECOVERY_PASSWORD,
+						@Value("${email-not-sent}") String emailNotSent,
+						@Value("${forgot-password-wrong}") String forgotPasswordWrong,
+						@Value("${email-not-found}") String emailNotFound,
+						@Value("${code-not-found}") String codeNotFound,
+						@Value("${token-wrong}") String tokenWrong,
+						@Value("${code-expired}") String codeExpired,
+						@Value("${code-incorrect}") String codeIncorrect,
+						@Value("${account-created}") String accountCreated,
+						@Value("${password-restored}") String passwordRestored,
+						@Value("${email-sent}") String emailSent) {
+
 		this.TEMPLATE_FORGOT_PASSWORD = TEMPLATE_FORGOT_PASSWORD;
+		this.userRepository = userRepository;
+		this.emailService = emailService;
+		this.tokenService = tokenService;
+		this.requestService = requestService;
 		this.URL_RECOVERY_PASSWORD = URL_RECOVERY_PASSWORD;
+		this.emailNotSent = emailNotSent;
+		this.forgotPasswordWrong = forgotPasswordWrong;
+		this.emailNotFound = emailNotFound;
+		this.codeNotFound = codeNotFound;
+		this.tokenWrong = tokenWrong;
+		this.codeExpired = codeExpired;
+		this.codeIncorrect = codeIncorrect;
+		this.accountCreated = accountCreated;
+		this.passwordRestored = passwordRestored;
+		this.emailSent = emailSent;
 	}
 
 	@Override
@@ -81,12 +116,12 @@ public class UserServices implements UserDetailsService {
 
 			User user = optionalUseruser.get();
 			return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getUserPassword(),
-					mapAutorities(user.getRoles()));
+					mapAuthorities(user.getRoles()));
 		} else
 			throw new UsernameNotFoundException("User or password wrong.");
 	}
 
-	private Collection<? extends GrantedAuthority> mapAutorities(Collection<Role> roles) {
+	private Collection<? extends GrantedAuthority> mapAuthorities(Collection<Role> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
 
@@ -111,22 +146,22 @@ public class UserServices implements UserDetailsService {
 				
 				this.emailService.sendMessage(emailContent);
 				
-				model.addAttribute("emailSended", "Email has been sended successfully, please check your inbox");
+				model.addAttribute("emailSended", this.emailSent);
 				log.info("Email was sended successfully for -> {}", forgotPasswordDT.getEmail());
 				
 			} catch (MailException | InterruptedException | ExecutionException | MessagingException | IOException
 					| TemplateException e) {
 				
 				log.error("Error when email was builded -> {}", e);
-				model.addAttribute("error" , "The email was not sended.");
+				model.addAttribute(ThymeleafAttributes.ERROR , this.emailNotSent);
 			} catch (ForgotPasswordProcessException e) {
-				model.addAttribute("error" , "Something went wrong with the forgot password request, please contact your admin.");
+				model.addAttribute(ThymeleafAttributes.ERROR , this.forgotPasswordWrong);
 				log.error("Forgot password went wrong -> {}", e);
 				
 			}
 
 		} else {
-			model.addAttribute("userNotFounded", "The email provided was not valid");
+			model.addAttribute(ThymeleafAttributes.USER_NOT_FOUND, this.emailNotFound);
 			log.error("Email was not sended successfully for -> {}", forgotPasswordDT.getEmail());
 		}
 
@@ -134,16 +169,17 @@ public class UserServices implements UserDetailsService {
 
 	public void verificationCodeProcess(int id, Model model) {
 		Optional<Token> tokenOptional = this.tokenService.findById(id);
-		model.addAttribute("idToken", id);
-		
+		model.addAttribute(ThymeleafAttributes.ID_TOKEN, id);
+
 		if(tokenOptional.isPresent()) {
-			final String message = String.format("We emailed you the five digit code to %s", tokenOptional.get().getUser().getEmail());
-			model.addAttribute("message", message);	
-			model.addAttribute("token", id);
+			final String template = "We emailed you the five digit code to %s";
+			final String message = String.format(template, tokenOptional.get().getUser().getEmail());
+			model.addAttribute(ThymeleafAttributes.MESSAGE, message);
+			model.addAttribute(ThymeleafAttributes.TOKEN, id);
 		}else {
-			model.addAttribute("error", "Something wrong with your token, please send another forgot password request");
+			model.addAttribute(ThymeleafAttributes.ERROR, this.tokenWrong);
 		}
-		
+
 	}
 
 	public String codeVerificationRequest(int id, Model model, CodeVerificationDTO codeVerificationDTO, RedirectAttributes redirectAttributes) {
@@ -153,26 +189,27 @@ public class UserServices implements UserDetailsService {
 			final Token token = tokenOptional.get();
 			Timestamp now = Timestamp.from(Instant.now());
 			if(now.after(token.getExpireDate())) {
-				model.addAttribute("error", "Your secure code has expired.");
-				return "welcome/code-verification";
+				model.addAttribute(ThymeleafAttributes.ERROR, this.codeExpired);
+				return HtmlTemplate.WELCOME_CODE_VERIFICATION;
 			}else {
 				if(code.equals(token.getValue())) {
-					
-					
-					redirectAttributes.addFlashAttribute("idUser", token.getUser().getIdAppUser());
+
+					redirectAttributes.addFlashAttribute(ThymeleafAttributes.ID_USER, token.getUser().getIdAppUser());
 					this.tokenService.deleteToken(token);
 					return "redirect:/reset-password";
+
 				}else {
 					log.error("Secure code bad -> {}", codeVerificationDTO.toString());
-					model.addAttribute("error", "Your secure code is incorrect.");
-					return "welcome/code-verification";
+					model.addAttribute(ThymeleafAttributes.ERROR, this.codeIncorrect);
+					model.addAttribute(ThymeleafAttributes.ID_TOKEN,id);
+					return HtmlTemplate.WELCOME_CODE_VERIFICATION;
 				}
 			}
 		}else {
-			model.addAttribute("error", "Your secure code was not founded.");
-			return "welcome/code-verification";
+			model.addAttribute(ThymeleafAttributes.ERROR, this.codeNotFound);
+			return HtmlTemplate.WELCOME_CODE_VERIFICATION;
 		}
-		
+
 	}
 
     public void saveAccount(Model model, UserDTO userDTO) {
@@ -181,9 +218,9 @@ public class UserServices implements UserDetailsService {
 			validateNewUser(userDTO);
 			loadAndSaveUSer(userDTO);
 
-			model.addAttribute("generalMessage","Your account has been created successfully, please contact your admin for role configuration");
+			model.addAttribute(ThymeleafAttributes.GENERAL_MESSAGE,this.accountCreated);
 		}catch (UserException e){
-			model.addAttribute("error", e.getMessage());
+			model.addAttribute(ThymeleafAttributes.ERROR, e.getMessage());
 		}
     }
 
@@ -211,13 +248,13 @@ public class UserServices implements UserDetailsService {
 
 	private Map<String, Object> loadMap(ForgotPasswordDT forgotPasswordDT, User user) throws ForgotPasswordProcessException {
 		Map<String, Object> content = new HashMap<>();
-		LocalDateTime myDateObj = LocalDateTime.now();  
+		LocalDateTime myDateObj = LocalDateTime.now();
 	    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E, MMM dd yyyy");
-	    
+
 		content.put("date", myDateObj.format(myFormatObj));
-		
+
 		String secureCodeToken = RandomStringUtils.random(5, false, true);
-		content.put("token", secureCodeToken);
+		content.put(ThymeleafAttributes.TOKEN, secureCodeToken);
 		
 		Optional<Request> request = this.requestService.findById(forgotPasswordDT.getIdRequest());
 		
@@ -251,23 +288,18 @@ public class UserServices implements UserDetailsService {
 			
 			User user = this.userRepository.findById(idUser).get();
 
-
 			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 			validateInputs(resetPasswordDTO, encoder);
 
-			if(encoder.matches(resetPasswordDTO.getOldPassword(), user.getUserPassword())) {
-				user.setUserPassword(encoder.encode(resetPasswordDTO.getNewPassword()));
-				this.userRepository.save(user);
+			user.setUserPassword(encoder.encode(resetPasswordDTO.getNewPassword()));
+			this.userRepository.save(user);
 				
-				model.addAttribute("generalMessage", "The password has been restored");
-			}else {
-				model.addAttribute("idUser", idUser);
-				model.addAttribute("error", "Your old password is wrong");
-			}	
+			model.addAttribute(ThymeleafAttributes.GENERAL_MESSAGE, this.passwordRestored);
+			model.addAttribute(ThymeleafAttributes.ID_USER, idUser);
 		} catch (ForgotPasswordProcessException e) {
-			model.addAttribute("error", e.getMessage());
-			model.addAttribute("idUser", idUser);
+			model.addAttribute(ThymeleafAttributes.ERROR, e.getMessage());
+			model.addAttribute(ThymeleafAttributes.ID_USER, idUser);
 			log.error("Error when inputs were validated");
 		}
 		
@@ -277,10 +309,5 @@ public class UserServices implements UserDetailsService {
 		if(!resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getRepeatNewPassword())) {
 			throw new ForgotPasswordProcessException("Your new password are not the same");
 		}
-
-		if(resetPasswordDTO.getOldPassword().equals(resetPasswordDTO.getNewPassword())){
-			throw new ForgotPasswordProcessException("Your new password must be different.");
-		}
-		
 	}
 }
