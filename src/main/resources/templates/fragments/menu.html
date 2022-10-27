@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html mlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" th:fragment="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" style="background-color: #D72130;" href="index.html">
+            <div class="sidebar-brand-text mx-3">Sport Hub</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+        <!--CUSTOM HTML CODE-->
+        <script>document.addEventListener("DOMContentLoaded", function(){
+               document.querySelectorAll('.sidebar .nav-link').forEach(function(element){
+                   element.addEventListener('click', function (e) {
+                       let nextEl = element.nextElementSibling;
+                       let parentEl  = element.parentElement;
+                       let allSubmenus_array =	parentEl.querySelectorAll('.submenu');
+                       if(nextEl && nextEl.classList.contains('submenu')) {	
+                           e.preventDefault();	
+                           if(nextEl.style.display == 'block'){
+                               nextEl.style.display = 'none';
+                           } else {
+                               nextEl.style.display = 'block';
+                           }
+                       }
+                   });
+               })
+           // end if innerWidth
+           }); 
+           // DOMContentLoaded  end</script>
+           <style>
+            @media all {
+            .sidebar .submenu, .sidebar .dropdown-menu{
+                position: static!important;
+                margin-left:0.7rem!important; margin-right:0.7rem!important; margin-bottom: .5rem!important;
+            }
+        }	
+        </style>
+        <nav class="sidebar card py-2 mb-4">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" style="color:black"th:utext="#{label.home}"></a>
+                </li>
+                <!---------------FOR ONE CATEGORY AS PARENT----------------><!--
+                <li class="nav-item" th:each="category : ${categories}">
+                    <a class="nav-link" href="#"style="color:black" th:text="${category.name}"> Submenu links <b class="float-end">&raquo;</b> </a>
+                    <ul class="submenu dropdown-menu">
+                        <li th:each="subcategori : ${category.subCategories}">
+                    		<a class="nav-link" href="#"style="color:black" th:text="${subcategori}">Submenu item 1 </a>
+                    	</li>
+                    </ul>
+                </li>
+                <hr class="sidebar-divider d-none d-md-block">-->
+                <!---------------FOR A SUB CATEGORY AS PARENT---------------->
+                <li class="nav-item" th:each="category : ${categories}">
+                    <a class="nav-link" href="#"style="color:black" th:text="${category.name}"> Treeview category <b class="float-end">&raquo;</b> </a>
+                    <ul class="submenu dropdown-menu">
+                    <div th:if="${category.subCategories !=  null}">
+                    	<li th:each="subcategory : ${category.subCategories}">
+                            <a class="nav-link" href="#"style="color:black" th:text="${subcategory.name}">Submenu item 3 <b class="float-end">&raquo;</b> </a>
+                            <ul class="submenu dropdown-menu">
+                                <li th:each="article : ${subcategory.articles}">
+                                <a class="nav-link" th:href="@{/homeArticle/article/description?id={article}(article=${article.idArticle})}"style="color:black" th:text="${article.title}">Multi level 1</a></li>
+                            </ul>
+                        </li>
+                    </div>
+                    </ul>
+                </li>
+                <!------------------------------->
+                <li class="nav-item">
+                    <a class="nav-link" href="#"style="color:black"> Another page </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"style="color:black"> Demo link </a>
+                </li>
+            </ul>
+            </nav>
+        <!--CUSTOM HTML CODE-->
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    </ul>
+</body>
+</html>
