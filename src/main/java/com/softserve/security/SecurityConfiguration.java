@@ -43,8 +43,8 @@ public class SecurityConfiguration {
 		httpSecurity.authorizeRequests().antMatchers("/**", "/js/**", "/css/**", "/img/**").permitAll().anyRequest()
 				.authenticated().and().formLogin().loginPage("/").defaultSuccessUrl("/start").permitAll().and().logout()
 				.invalidateHttpSession(true).clearAuthentication(true)
-				.logoutRequestMatcher(new AntPathRequestMatcher("/close")).logoutSuccessUrl("/").permitAll().and()
-				.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+				.logoutRequestMatcher(new AntPathRequestMatcher("/close")).logoutSuccessUrl("/").permitAll().and().csrf().disable();
+			  .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
 
 		return httpSecurity.build();
 	}
