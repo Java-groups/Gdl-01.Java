@@ -1,5 +1,6 @@
 package com.softserve.service;
 
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
