@@ -9,9 +9,43 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        
+  mail:
+    host: smtp.office365.com
+    port: 587
+    username: ${email_username}
+    password: ${email_pwd}
+    properties:
+      mail:
+        store: 
+          protocol: pop3
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+template:
+   forgot-password: forgot-password.ftl
+
+custom-url:
+   recovery-password: http://localhost:8080/forgot-password/recovery?id=%d
+          
 firebase:
     bucket-name: ${bucket_name}
     project-id: ${project_id}
     service-account-key: ${service_account}
     base-url: https://firebasestorage.googleapis.com/v0/b/sport-hub-11400.appspot.com/o/%s
+
+token-wrong: Something wrong with your token, please send another forgot password request.
+code-expired:  Your secure code has expired.
+email-not-sent: The email was not sent.
+forgot-password-wrong: Something went wrong with the forgot password request, please contact your admin.
+email-not-found: The email provided was not valid.
+password-restored: The password has been restored.
+account-created: Your account has been created successfully, please contact your admin for role configuration.
+code-not-found: Your secure code was not founded.
+code-incorrect: Your secure code is incorrect.
+email-sent: Email has been sent successfully, please check your inbox

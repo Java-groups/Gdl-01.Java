@@ -2,7 +2,8 @@ package com.softserve.model;
 
 import java.util.Date;
 import java.util.List;
-
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 public class User {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_app_user")
 	private Integer idAppUser;
 	
@@ -42,9 +45,6 @@ public class User {
 	@Column(name="profile_picture", length = 120)
 	private String profilePicture;
 	  
-	@Column(name="id_role")
-	private Integer idRole;
-	  
 	@Column(name="status")
 	private Byte status;
 	
@@ -57,7 +57,10 @@ public class User {
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name="user_role", 
-				joinColumns = @JoinColumn(name="id_user_role", referencedColumnName = "id_app_user"),
+				joinColumns = @JoinColumn(name="id_app_user", referencedColumnName = "id_app_user"),
 				inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id_role"))
 	private List<Role> roles;
+	
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+	private List<Token> tokenList;
 }
