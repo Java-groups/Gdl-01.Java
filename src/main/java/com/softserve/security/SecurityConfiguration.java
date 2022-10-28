@@ -44,7 +44,7 @@ public class SecurityConfiguration {
 				.authenticated().and().formLogin().loginPage("/").defaultSuccessUrl("/start").permitAll().and().logout()
 				.invalidateHttpSession(true).clearAuthentication(true)
 				.logoutRequestMatcher(new AntPathRequestMatcher("/close")).logoutSuccessUrl("/").permitAll().and().csrf().disable()
-			  	.exceptionHandling().accessDeniedHandler(accessDeniedHandler())
+			  	.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
 
 		return httpSecurity.build();
 	}
