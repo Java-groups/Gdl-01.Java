@@ -11,4 +11,9 @@ public class SurveyController {
     public String showSurveys(Model model){
         return "admin/surveys";
     }
+    
+    @GetMapping("/my-surveys")
+    public String userSurveys() {
+        return "user/survey-user";
+    }
 }
