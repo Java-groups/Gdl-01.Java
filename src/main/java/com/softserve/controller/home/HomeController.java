@@ -85,6 +85,7 @@ public class HomeController {
 	@GetMapping("/homeArticle")
 	public String homeArticle(Model model) {
 		this.categoriesService.loadContentMain(model);
+		this.articleService.loadTop3Popular(model);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		java.util.Collection<? extends GrantedAuthority> col = authentication.getAuthorities();
 

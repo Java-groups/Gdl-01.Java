@@ -1,5 +1,6 @@
 package com.softserve.service;
 
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -151,4 +152,11 @@ public class ArticleService {
 		this.articleRepository.save(article);
 		return article;
 	}
+
+    public void loadTop3Popular(Model model) {
+		List<Article>top3Commented = articleRepository.findByTop3MostCommented();
+		List<Article>top3Liked = articleRepository.findByTop3MostLiked();
+		model.addAttribute("articleListMostCommented", top3Commented);
+		model.addAttribute("articleListMostLiked", top3Liked);
+    }
 }

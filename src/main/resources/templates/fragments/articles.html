@@ -32,4 +32,44 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-sm-6">
+            <!--Izquierda-->
+            <h5>Most Commented Articles</h5>
+            <div class="card mb-3" style="max-width: 540px;" th:each="article : ${articleListMostCommented}">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <!--<img src="..." class="card-img" alt="...">-->
+                        <img alt="Article image" th:src="'https://firebasestorage.googleapis.com/v0/b/sport-hub-11400.appspot.com/o/' + ${article.image}" style="max-width: -moz-available;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h6 class="card-title" th:text="${article.title}" style="max-width: 200px;  overflow: hidden;  text-overflow: ellipsis;  white-space: nowrap;">Card title</h6>
+                            <p class="card-text" th:text="${article.description}" style="overflow: hidden;max-width: 75ch;text-overflow: ellipsis;white-space: nowrap;">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <!--Derecha-->
+            <h5>Most Liked Articles</h5>
+            <div class="card mb-3" style="max-width: 540px;"th:each="article : ${articleListMostLiked}">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <!--<img src="..." class="card-img" alt="...">
+                        <img alt="" th:src="${article.image}" width="20%">-->
+                        <img alt="Article image" th:src="'https://firebasestorage.googleapis.com/v0/b/sport-hub-11400.appspot.com/o/' + ${article.image}" style="max-width: -moz-available;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h6 class="card-title" th:text="${article.title}" style="overflow: hidden;max-width: 75ch;text-overflow: ellipsis;white-space: nowrap;">Card title</h6>
+                            <p class="card-text" th:text="${article.description}" style="overflow: hidden;max-width: 75ch;text-overflow: ellipsis;white-space: nowrap;">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
