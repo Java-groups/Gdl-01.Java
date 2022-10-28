@@ -4,6 +4,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -106,12 +107,19 @@ public class ArticleService {
 			loadNewArticleContent(model, newArticleDTO);
 		}catch (ArticleException articleException){
 			log.error("Error when article was be builded. ->{}", articleException);
-			model.addAttribute("error", "Something went wront when was creating the Article");
+			model.addAttribute("error", articleException.getMessage());
+			loadNewArticleContent(model, newArticleDTO);
 		}
 
 	}
 
 	private Article loadArticle(NewArticleDTO newArticleDTO) throws ArticleException{
+
+		if(newArticleDTO.getArticleDescriptionHtml().equals(""))
+			throw new ArticleException("The article description is required");
+		if(newArticleDTO.getArticleImage().getOriginalFilename().equals(""))
+			throw new ArticleException("The article image is required");
+
 		Article article = new Article();
 
 		article.setCreationDate(Timestamp.from(Instant.now()));
