@@ -1,5 +1,6 @@
 package com.softserve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +24,8 @@ public class PollOption {
     @Column(name = "poll_order")
     private Integer order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "id_poll")
     private Poll poll;
 }
