@@ -1,8 +1,9 @@
-'use strict';
+"use strict";
 
 const openClosed = document.querySelector('#openClosedContainer');
 const newSurvey = document.querySelector('.new-survey');
 const newSurveyContainer = document.querySelector('.new-survey-container');
+
 let counter = 1;
 
 loadEventListeners();
@@ -10,7 +11,24 @@ loadEventListeners();
 function loadEventListeners() {
     openClosed.addEventListener('click', switchSurveys);
     newSurvey.addEventListener('click', createNewSurvey);
-    newSurveyContainer.addEventListener('click', addAnswerOption);
+    newSurveyContainer.addEventListener('click', newSurveyContainerManager);
+}
+
+function padTo2Digits(num) {
+    return num.toString().padStart(2, '0');
+}
+
+function createDate(){
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let hour = padTo2Digits(date.getHours());
+    let minutes = padTo2Digits(date.getMinutes());
+    let seconds = padTo2Digits(date.getSeconds());
+
+    return year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":" + seconds;
 }
 
 function createNewSurvey() {
@@ -19,21 +37,23 @@ function createNewSurvey() {
 
     newPollForm.innerHTML = `
         <div class="form-group">
-            <label for="exampleFormControlTextarea1">Question</label>
-            <textarea class="form-control" id="textQuestion" rows="3"></textarea>
+            <label id="question" for="questionArea">Question</label>
+            <textarea class="form-control" id="questionText" rows="3"> </textarea>
         </div>
-        <div class="input-group is-invalid option-container">
+
+        <div class="input-group is-invalid options-container">
             <div class="option">
                 <div class="custom-file">
-                    <input type="text" id="${counter}" required>
+                    <input type="text" id="optionText${counter}" required> </input>
                     <button class="btn btn-outline-secondary" type="button" id="delete-element"> X </button>
                 </div>
             </div>
         </div>
+
         <button type="button" class="btn btn-outline-danger add-option">+Add</button>
         <div>
-            <button type="button" class="btn btn-outline-danger">Cancel</button>
-            <button type="button" class="btn btn-danger">Save</button>        
+            <button type="button" class="btn btn-outline-danger cancel">Cancel</button>
+            <button type="button" class="btn btn-danger save">Save</button>        
         </div>
     `;
 
@@ -41,23 +61,88 @@ function createNewSurvey() {
     newSurveyContainer.appendChild(newPollForm);
 }
 
-function addAnswerOption(e) {
-    if (e.target.classList.contains('add-option')){
-        counter++;
-        let optionContainer = document.querySelector('.option-container');
-        let newOption = document.createElement('div');
+function newSurveyContainerManager(e) {
+    if (e.target.classList.contains("add-option")) {
+        addAnswerOption();
+    } else if (e.target.classList.contains("save")) {
+        save();
+    } else if (e.target.classList.contains("cancel")) {
+        cancel();
+    }
+}
 
-        newOption.setAttribute('class', 'option');
-        newOption.innerHTML = `
-            <div class="custom-file">
-                <input type="text" id="${counter}" required>
-                <button class="btn btn-outline-secondary" type="button" id="delete-element"> X </button>
-            </div>
-        `;
+function postSurvey(survey) {
+    fetch('api/surveys', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(survey)
+    });
+}
 
-        optionContainer.appendChild(newOption);
+function save() {
+    let survey = {
+        "poll": {
+            "question": "",
+            "userId": 1,
+            "pollOptions": [ ]
+        }
+    };
+
+    let question = document.querySelector('#questionText').value;
+    let newOption = { };
+
+    survey.poll.creationDate = createDate();
+    survey.poll.closedDate = createDate();
+    survey.poll.modificationDate = createDate();
+    survey.poll.question = question;
+
+    for (let i = 1; i <= counter; i++) {
+        newOption = {
+            "value": document.querySelector(`#optionText${i}`).value,
+            "order": i
+        };
+        survey.poll.pollOptions.push(newOption);
     }
 
+    postSurvey(survey);
+    cancel();
+}
+
+function cancel() {
+    counter = 1;
+    newSurvey.disabled = false;
+    newSurveyContainer.innerHTML = " ";
+}
+
+function addAnswerOption(e) {
+    counter++;
+    let optionContainer = document.querySelector('.options-container');
+    let newOption = document.createElement('div');
+
+    newOption.setAttribute('class', 'option');
+    newOption.innerHTML = `
+        <div class="custom-file">
+            <input type="text" id="optionText${counter}"> </input>
+            <button class="btn btn-outline-secondary" type="button" id="delete-element"> X </button>
+        </div>
+    `;
+
+    optionContainer.appendChild(newOption);
+}
+
+function clearPollInfoContainer() {
+    let pollInfoContainer = document.querySelector('#poll-info-container');
+
+    while (pollInfoContainer.hasChildNodes()) {
+        if (pollInfoContainer.firstElementChild.getAttribute('class') !== 'new-survey-container') {
+            pollInfoContainer.removeChild(pollInfoContainer.firstElementChild);
+        } else {
+            break;
+        }
+    }
 }
 
 function switchSurveys(e){
@@ -102,17 +187,5 @@ function cleanHTML(){
     let theader = document.querySelector('.card-body table thead');
     while (theader.firstChild){
         theader.removeChild(theader.firstChild);
-    }
-}
-
-function clearPollInfoContainer() {
-    let pollInfoContainer = document.querySelector('#poll-info-container');
-
-    while (pollInfoContainer.hasChildNodes()) {
-        if (pollInfoContainer.firstElementChild.getAttribute('class') !== 'new-survey-container') {
-            pollInfoContainer.removeChild(pollInfoContainer.firstElementChild);
-        } else {
-            break;
-        }
     }
 }

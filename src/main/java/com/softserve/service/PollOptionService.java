@@ -6,6 +6,7 @@ import com.softserve.repository.PollOptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -16,7 +17,7 @@ public class PollOptionService {
     @Autowired
     private PollOptionsMapper pollOptionMapper;
 
-    public void savePollOptions(Set<PollOptionDTO> pollOptionDTO) {
-        pollOptionDTO.forEach( element -> pollOptionRepository.save(pollOptionMapper.sourceToDestination(element)));
+    public void save(List<PollOptionDTO> pollOptionDTO) {
+        pollOptionDTO.forEach(element -> pollOptionRepository.save(pollOptionMapper.toPollOption(element)));
     }
 }

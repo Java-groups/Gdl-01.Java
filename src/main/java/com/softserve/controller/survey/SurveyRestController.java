@@ -11,7 +11,7 @@ public class SurveyRestController {
     @Autowired
     private SurveyService surveyService;
 
-    @PostMapping(value = "/api/surveys", consumes = "application/json")
+    @PostMapping(value = "api/surveys", consumes = "application/json")
     public void createSurvey(@RequestBody SurveyDTO surveyDTO){
         surveyService.save(surveyDTO);
     }

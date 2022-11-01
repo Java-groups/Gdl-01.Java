@@ -8,8 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {PollOptionsMapper.class})
 public interface PollMapper {
-    @Mapping(source = "id", target = "idPoll")
-    Poll sourceToDestination(PollDTO source);
+    Poll toPoll(PollDTO source);
     @InheritInverseConfiguration
     PollDTO destinationToSource(Poll destination);
 }
