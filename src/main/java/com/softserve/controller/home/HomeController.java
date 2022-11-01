@@ -24,7 +24,7 @@ public class HomeController {
 	
 	@GetMapping("/")
 	public String welcome() {
-		return "welcome/index";
+		return "user/survey-user";
 	}
 	
 	@GetMapping("/home")
