@@ -21,6 +21,9 @@ public class PollService {
     private PollRepository pollRepository;
 
     @Autowired
+    private PollOptionService pollOptionService;
+
+    @Autowired
     private PollOptionRepository pollOptionRepository;
 
     @Autowired
@@ -29,21 +32,14 @@ public class PollService {
     @Autowired
     private PollOptionsMapper pollOptionsMapper;
 
-    @Autowired
-    private PollOption pollOption;
-
     ModelMapper mapper = new ModelMapper();
 
     public void save(PollDTO pollDTO) {
-        Poll poll = pollMapper.toPoll(pollDTO);
-
-        for (PollOptionDTO pollOptionDTO : pollDTO.getPollOptions()) {
-            PollOption pollOption = pollOptionsMapper.toPollOption(pollOptionDTO);
-            pollOption.setPoll(poll);
-            poll.getPollOptions().add(pollOption);
-        }
+        Poll poll = mapper.map(pollDTO, Poll.class);
+        pollDTO.getPollOptions().forEach( element -> element.setPoll(poll));
 
         pollRepository.save(poll);
+        pollOptionService.save(pollDTO.getPollOptions());
     }
 
     public PollDTO getPoll(Integer id) {

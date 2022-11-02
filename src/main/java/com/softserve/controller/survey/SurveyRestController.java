@@ -15,12 +15,12 @@ public class SurveyRestController {
     @Autowired
     PollService pollService;
 
-    @PostMapping(value = "api/surveys", consumes = "application/json")
+    @PostMapping(value = "/create", consumes = "application/json")
     public void createSurvey(@RequestBody SurveyDTO surveyDTO){
         pollService.save(surveyDTO.getPoll());
     }
 
-    @PutMapping(value = "api/surveys", consumes = "application/json")
+    @PutMapping(value = "/api/surveys", consumes = "application/json")
     public void updateSurvey(@RequestBody SurveyDTO surveyDTO){
         pollService.save(surveyDTO.getPoll());
     }

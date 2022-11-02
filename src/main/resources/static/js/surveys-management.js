@@ -72,7 +72,7 @@ function newSurveyContainerManager(e) {
 }
 
 function postSurvey(survey) {
-    fetch('api/surveys', {
+    fetch('api/poll/create', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
