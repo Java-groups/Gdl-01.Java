@@ -1,13 +1,11 @@
 function submitForm(){
 
-<<<<<<< HEAD
     const username = document.querySelector("#user-name").value;
     const password = document.querySelector("#password").value;
     let jsonData = {
         username,
         password
     };
-    console.log(jsonData);
 
     let bearerCookie = fetch('/sport-hub/api/signin', {
         method: 'POST',
