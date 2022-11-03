@@ -1,12 +1,7 @@
 package com.softserve.service;
 
 import com.softserve.dto.PollDTO;
-import com.softserve.dto.PollOptionDTO;
-import com.softserve.mapper.PollMapper;
-import com.softserve.mapper.PollOptionsMapper;
 import com.softserve.model.Poll;
-import com.softserve.model.PollOption;
-import com.softserve.repository.PollOptionRepository;
 import com.softserve.repository.PollRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +17,6 @@ public class PollService {
 
     @Autowired
     private PollOptionService pollOptionService;
-
-    @Autowired
-    private PollOptionRepository pollOptionRepository;
-
-    @Autowired
-    private PollMapper pollMapper;
-
-    @Autowired
-    private PollOptionsMapper pollOptionsMapper;
 
     ModelMapper mapper = new ModelMapper();
 

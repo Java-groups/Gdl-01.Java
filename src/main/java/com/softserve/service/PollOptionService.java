@@ -1,7 +1,6 @@
 package com.softserve.service;
 
 import com.softserve.dto.PollOptionDTO;
-import com.softserve.mapper.PollOptionsMapper;
 import com.softserve.model.PollOption;
 import com.softserve.repository.PollOptionRepository;
 import org.modelmapper.ModelMapper;
@@ -14,9 +13,6 @@ import java.util.List;
 public class PollOptionService {
     @Autowired
     private PollOptionRepository pollOptionRepository;
-
-    @Autowired
-    private PollOptionsMapper pollOptionMapper;
 
     private ModelMapper mapper = new ModelMapper();
 
