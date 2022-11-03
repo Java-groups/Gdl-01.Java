@@ -29,8 +29,8 @@ public class PollService {
     @Autowired
     private PollOptionsMapper pollOptionsMapper;
 
-    @Autowired
-    private PollOption pollOption;
+    //@Autowired
+    //private PollOption pollOption;
 
     ModelMapper mapper = new ModelMapper();
 

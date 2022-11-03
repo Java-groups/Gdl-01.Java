@@ -15,6 +15,7 @@ import javax.mail.MessagingException;
 
 import com.softserve.dto.UserDTO;
 import com.softserve.exceptions.UserException;
+import com.softserve.util.AuthoritiesMap;
 import com.softserve.util.HtmlTemplate;
 import com.softserve.util.ThymeleafAttributes;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -116,13 +117,9 @@ public class UserServices implements UserDetailsService {
 
 			User user = optionalUseruser.get();
 			return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getUserPassword(),
-					mapAuthorities(user.getRoles()));
+					AuthoritiesMap.mapAuthorities(user.getRoles()));
 		} else
 			throw new UsernameNotFoundException("User or password wrong.");
-	}
-
-	private Collection<? extends GrantedAuthority> mapAuthorities(Collection<Role> roles) {
-		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
 
 	public Optional<User> findByEmail(final String email) {
