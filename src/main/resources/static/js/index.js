@@ -1,5 +1,6 @@
 function submitForm(){
 
+<<<<<<< HEAD
     const username = document.querySelector("#user-name").value;
     const password = document.querySelector("#password").value;
     let jsonData = {
@@ -18,7 +19,6 @@ function submitForm(){
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Success:', data);
         localStorage.setItem('bearer', data.token);
       })
       .catch((error) => {
