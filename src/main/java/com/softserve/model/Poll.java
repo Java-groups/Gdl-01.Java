@@ -35,6 +35,6 @@ public class Poll {
     @Column(name = "modification_date")
     private Timestamp modificationDate;
 
-    @OneToMany(mappedBy = "poll", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "poll")
     private List<PollOption> pollOptions = new ArrayList<>();
 }
