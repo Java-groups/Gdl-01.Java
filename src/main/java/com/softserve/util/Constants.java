@@ -11,7 +11,8 @@ public class Constants {
 	
 	@Value("${template.forgot-password}")
 	public static String TEMPLATE_FORGOT_PASSWORD;
-	
+
+	public static String ARTICLE_CREATED = "Article has been created successfully";
 	
 	
 }

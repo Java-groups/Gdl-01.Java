@@ -63,3 +63,30 @@ $('.image-upload-wrap').bind('dragover', function() {
 $('.image-upload-wrap').bind('dragleave', function() {
 	$('.image-upload-wrap').removeClass('image-dropping');
 });
+
+function saveArticle(){
+    const form = document.querySelector("#article-form");
+    const bearerCookie = localStorage.getItem('bearer');
+
+    let bodyFormData = new FormData();
+    bodyFormData.append('articleImage', form[3].files[0], form[3].files[0].name);
+    bodyFormData.append('subCategory', form[5].value);
+    bodyFormData.append('team', form[6].value);
+    bodyFormData.append('location', form[7].value);
+    bodyFormData.append('headLine', form[9].value);
+    bodyFormData.append('caption', form[10].value);
+    bodyFormData.append('articleDescriptionHtml', form[11].value);
+
+    axios.post("/api/article/new", bodyFormData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "Authorization": `Bearer ${bearerCookie}`
+            },
+          })
+    .then((res) => {
+    console.log(res);
+    })
+    .catch((err) => {
+    console.log(err);
+    });
+}
