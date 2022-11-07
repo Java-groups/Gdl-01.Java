@@ -25,6 +25,8 @@
 		<mockito.version>4.8.1</mockito.version>
 		<jwt.version>4.2.1</jwt.version>
 		<jwt-json-web-token.version>0.11.5</jwt-json-web-token.version>
+		<swagger.version>3.0.0</swagger.version>
+		<swaggerui.version>3.0.0</swaggerui.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -160,8 +162,21 @@
 			<version>${jwt-json-web-token.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-
-
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${swaggerui.version}</version>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-parent</artifactId>-->
+<!--			<version>${parent.version}</version>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>
