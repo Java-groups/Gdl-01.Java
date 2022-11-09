@@ -6,8 +6,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.softserve.exceptions.ArticleException;
+import com.softserve.exceptions.CustomException;
 import com.softserve.model.Team;
 import com.softserve.model.User;
+import com.softserve.security.handler.ArticleResponseException;
 import com.softserve.security.user.UserServices;
 import com.softserve.util.Constants;
 import com.softserve.util.FireBaseProcess;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -127,15 +130,22 @@ public class ArticleService {
 	}
 
 	private NewArticleDTO mapJsonToArticleDTO(Map<String, Object> json, MultipartFile articleImage) {
-		NewArticleDTO newArticleDTO = new NewArticleDTO();
-		newArticleDTO.setArticleImage(articleImage);
-		newArticleDTO.setTeam(Integer.parseInt(json.get("team").toString()));
-		newArticleDTO.setSubCategory(Integer.parseInt(json.get("subCategory").toString()));
-		newArticleDTO.setLocation(Integer.parseInt(json.get("location").toString()));
-		newArticleDTO.setHeadLine(json.get("headLine").toString());
-		newArticleDTO.setCaption(json.get("caption").toString());
-		newArticleDTO.setArticleDescriptionHtml(json.get("articleDescriptionHtml").toString());
-		return newArticleDTO;
+
+		try {
+			NewArticleDTO newArticleDTO = new NewArticleDTO();
+			newArticleDTO.setArticleImage(articleImage);
+			newArticleDTO.setTeam(Integer.parseInt(json.get("team").toString()));
+			newArticleDTO.setSubCategory(Integer.parseInt(json.get("subCategory").toString()));
+			newArticleDTO.setLocation(Integer.parseInt(json.get("location").toString()));
+			newArticleDTO.setHeadLine(json.get("headLine").toString());
+			newArticleDTO.setCaption(json.get("caption").toString());
+			newArticleDTO.setArticleDescriptionHtml(json.get("articleDescriptionHtml").toString());
+			return newArticleDTO;
+		}catch (NumberFormatException i){
+			log.error("Number format exception -> {}", i);
+			throw new ArticleException("Something went wrong when Article was saving");
+		}
+
 	}
 
 	private Article loadArticle(NewArticleDTO newArticleDTO) throws ArticleException{
@@ -184,4 +194,25 @@ public class ArticleService {
 		model.addAttribute("articleListMostCommented", top3Commented);
 		model.addAttribute("articleListMostLiked", top3Liked);
     }
+
+	public ResponseEntity<?> loadNewArticleContentApi() {
+
+		final List<TeamDTO> teamList = this.teamService.findAll().stream().map(team ->
+				new TeamDTO(team.getIdTeam(), team.getDescription())
+		).collect(Collectors.toList());
+
+		final List<LocationDTO> locationList = this.locationService.findAll().stream().map(location ->
+						new LocationDTO(location.getIdLocation(), location.getDescription()))
+				.collect(Collectors.toList());
+		List<TeamDTO> categoriesList = this.categoryService.findByIdParentCategoryIsNull().stream()
+				.map(category ->
+						new TeamDTO(category.getIdCategory(), category.getName())
+				).collect(Collectors.toList());
+
+		Map<String, Object> list = new HashMap<>();
+		list.put("categories", categoriesList);
+		list.put("locations", locationList);
+		list.put("teams", teamList);
+		return ResponseEntity.ok(list);
+	}
 }

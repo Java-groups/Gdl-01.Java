@@ -13,15 +13,20 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/article/new")
+@RequestMapping("/api/article")
 @CrossOrigin(origins = "http://localhost:8080")
 public class ArticleRestController {
 
     @Autowired
     private ArticleService articleService;
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveArticle(@RequestParam Map<String, Object> json, @RequestParam("articleImage") MultipartFile articleImage){
         return this.articleService.saveArticle(json, articleImage);
+    }
+
+    @GetMapping("/load")
+    public ResponseEntity<?> readAllSubCategory(){
+        return this.articleService.loadNewArticleContentApi();
     }
 }

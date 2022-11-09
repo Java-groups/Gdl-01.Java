@@ -1,7 +1,6 @@
 /**
  * 
  */
-
 tinymce.init({
 	selector: 'textarea#default'
 });
@@ -9,14 +8,7 @@ tinymce.init({
 const btnCancel = document.querySelector("#btn-cancel");
 btnCancel.addEventListener("click", customAlert);
 
-/*const btnSave = document.querySelector("#btn-save");
-btnSave.addEventListener("click", submitForm);
 
-function submitForm(){
-	//const articleForm = document.querySelector("#article-form");
-	document.forms["article-form"].submit();
-
-}*/
 function customAlert(){
 	swal({
 		title: "you are about to discard the changes!",
@@ -84,9 +76,59 @@ function saveArticle(){
             },
           })
     .then((res) => {
-    console.log(res);
+        const generalMessage = document.querySelector("#general-message");
+        generalMessage.innerHTML = res.data.message;
     })
     .catch((err) => {
-    console.log(err);
+        const message = err.response.data.message;
+        const divAlert = document.querySelector('#error-message');
+        divAlert.innerHTML = message;
     });
+}
+
+function loadComboBox(){
+
+    const bearerCookie = localStorage.getItem('bearer');
+    axios.get("/api/article/load",{
+            headers: {
+              "Authorization": `Bearer ${bearerCookie}`
+            },
+          })
+    .then((res) => {
+        const data = res.data;
+
+        const categories = data.categories;
+        const categoriesId = 'input-subcategory';
+
+        populateCombo(categoriesId, categories);
+
+        const teams = data.teams;
+        const teamsId = 'input-team'
+
+        populateCombo(teams, teams);
+
+        const locations = data.locations;
+        const locationsId = 'input-location';
+
+        populateCombo(locationsId, locations);
+
+    })
+    .catch((err) => {
+        const message = err.response.data.message;
+        const divAlert = document.querySelector('#error-message');
+        divAlert.innerHTML = message;
+    });
+}
+
+function populateCombo(comboId, values){
+    let dropdown = document.createElement("select");
+    for(var i=0;i<values.length;i++){
+        var opt = document.createElement("option");
+        opt.text = values[i].description;
+        opt.value = values[i].id;
+        dropdown.options.add(opt);
+    }
+
+    let container=document.querySelector(`#${comboId}`);
+    container.appendChild(dropdown);
 }
