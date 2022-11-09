@@ -90,7 +90,6 @@ function saveArticle(){
             },
         })
             .then((res) => {
-                const message = err.response.data.message;
                 const divAlert = document.querySelector('#error-message');
                 divAlert.innerHTML = "";
 
