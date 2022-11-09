@@ -6,10 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.softserve.exceptions.ArticleException;
-import com.softserve.exceptions.CustomException;
 import com.softserve.model.Team;
 import com.softserve.model.User;
-import com.softserve.security.handler.ArticleResponseException;
 import com.softserve.security.user.UserServices;
 import com.softserve.util.Constants;
 import com.softserve.util.FireBaseProcess;
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,12 +1,9 @@
 package com.softserve.controller.article.api;
 
-import com.softserve.dto.NewArticleDTO;
-import com.softserve.exceptions.ArticleException;
 import com.softserve.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
