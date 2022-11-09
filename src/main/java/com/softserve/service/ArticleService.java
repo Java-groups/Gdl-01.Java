@@ -140,6 +140,7 @@ public class ArticleService {
 			newArticleDTO.setHeadLine(json.get("headLine").toString());
 			newArticleDTO.setCaption(json.get("caption").toString());
 			newArticleDTO.setArticleDescriptionHtml(json.get("articleDescriptionHtml").toString());
+			newArticleDTO.setArticleDescription(json.get("articleDescription").toString());
 			return newArticleDTO;
 		}catch (NumberFormatException i){
 			log.error("Number format exception -> {}", i);
@@ -160,7 +161,7 @@ public class ArticleService {
 		article.setCreationDate(Timestamp.from(Instant.now()));
 		article.setModificationDate(Timestamp.from(Instant.now()));
 		article.setDescriptionHtml(newArticleDTO.getArticleDescriptionHtml());
-		article.setDescription(newArticleDTO.getArticleDescriptionHtml());
+		article.setDescription(newArticleDTO.getArticleDescription());
 		article.setIsCommentable(true);
 		article.setStatus(1);
 		final Optional<Team> teamOptional = this.teamService.finById(newArticleDTO.getTeam());

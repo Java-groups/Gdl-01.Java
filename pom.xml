@@ -9,7 +9,7 @@
 		<version>2.7.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<groupId>com.softserve</groupId>
 	<artifactId>sport-hub</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -167,8 +167,28 @@
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
-			<plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>8</source><target>8</target></configuration></plugin>
+			<plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>
+				<configuration><source>8</source><target>8</target></configuration></plugin>
+
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.softserve.SportHubApplication</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
+
 	</build>
 
 </project>

@@ -56,34 +56,59 @@ $('.image-upload-wrap').bind('dragleave', function() {
 	$('.image-upload-wrap').removeClass('image-dropping');
 });
 
+function validateRequiredInputs() {
+    const inputs = [{id:'input-alt', msg: 'ALT is required'}, {id:'input-article-head-line', msg: 'ARTICLE HEADLINE is required'}, {id:'input-caption', msg: 'CAPTION is required'}];
+
+    inputs.forEach(input =>{
+        const current = document.querySelector(`#${input.id}`);
+        if(current.value ==='')
+            throw new Error(input.msg);
+    })
+}
+
 function saveArticle(){
     const form = document.querySelector("#article-form");
-    const bearerCookie = localStorage.getItem('bearer');
+    try {
+        validateRequiredInputs();
 
-    let bodyFormData = new FormData();
-    bodyFormData.append('articleImage', form[3].files[0], form[3].files[0].name);
-    bodyFormData.append('subCategory', form[5].value);
-    bodyFormData.append('team', form[6].value);
-    bodyFormData.append('location', form[7].value);
-    bodyFormData.append('headLine', form[9].value);
-    bodyFormData.append('caption', form[10].value);
-    bodyFormData.append('articleDescriptionHtml', form[11].value);
+        const bearerCookie = localStorage.getItem('bearer');
 
-    axios.post("/api/article/new", bodyFormData, {
+        let bodyFormData = new FormData();
+        bodyFormData.append('articleImage', form[3].files[0], form[3].files[0].name);
+        bodyFormData.append('subCategory', form[5].value);
+        bodyFormData.append('team', form[6].value);
+        bodyFormData.append('location', form[7].value);
+        bodyFormData.append('headLine', form[9].value);
+        bodyFormData.append('caption', form[10].value);
+        bodyFormData.append('articleDescriptionHtml', tinymce.get("default").getContent());
+        bodyFormData.append('articleDescription', form[11].value);
+
+        axios.post("/api/article/new", bodyFormData, {
             headers: {
-              "Content-Type": "multipart/form-data",
-              "Authorization": `Bearer ${bearerCookie}`
+                "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${bearerCookie}`
             },
-          })
-    .then((res) => {
+        })
+            .then((res) => {
+                const message = err.response.data.message;
+                const divAlert = document.querySelector('#error-message');
+                divAlert.innerHTML = "";
+
+                const generalMessage = document.querySelector("#general-message");
+                generalMessage.innerHTML = res.data.message;
+            })
+            .catch((err) => {
+                const message = err.response.data.message;
+                const divAlert = document.querySelector('#error-message');
+                divAlert.innerHTML = message;
+            });
+    }catch (e) {
         const generalMessage = document.querySelector("#general-message");
-        generalMessage.innerHTML = res.data.message;
-    })
-    .catch((err) => {
-        const message = err.response.data.message;
+        generalMessage.innerHTML = "";
+
         const divAlert = document.querySelector('#error-message');
-        divAlert.innerHTML = message;
-    });
+        divAlert.innerHTML = e.message;
+    }
 }
 
 function loadComboBox(){
@@ -105,13 +130,12 @@ function loadComboBox(){
         const teams = data.teams;
         const teamsId = 'input-team'
 
-        populateCombo(teams, teams);
+        populateCombo(teamsId, teams);
 
         const locations = data.locations;
         const locationsId = 'input-location';
 
         populateCombo(locationsId, locations);
-
     })
     .catch((err) => {
         const message = err.response.data.message;
@@ -121,14 +145,20 @@ function loadComboBox(){
 }
 
 function populateCombo(comboId, values){
-    let dropdown = document.createElement("select");
-    for(var i=0;i<values.length;i++){
-        var opt = document.createElement("option");
-        opt.text = values[i].description;
-        opt.value = values[i].id;
-        dropdown.options.add(opt);
-    }
 
     let container=document.querySelector(`#${comboId}`);
-    container.appendChild(dropdown);
+
+    let opt = document.createElement("option");
+    opt.text = values[0].description;
+    opt.value = values[0].id;
+    opt.selected=true;
+    container.appendChild(opt);
+
+    for(let i=0; i<values.length; i++){
+        opt = document.createElement("option");
+        opt.text = values[i].description;
+        opt.value = values[i].id;
+        container.appendChild(opt);
+    }
+
 }
