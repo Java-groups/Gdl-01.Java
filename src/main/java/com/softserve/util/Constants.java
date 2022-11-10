@@ -13,6 +13,8 @@ public class Constants {
 	public static String TEMPLATE_FORGOT_PASSWORD;
 
 	public static String ARTICLE_CREATED = "Article has been created successfully";
+
+	public static String BODY_ERROR_MESSAGE = "Error";
 	
 	
 }
