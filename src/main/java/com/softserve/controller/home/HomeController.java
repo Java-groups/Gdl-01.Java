@@ -35,7 +35,7 @@ public class HomeController {
 	private UserServices userServices;
 	
 	@GetMapping("/")
-	public String welcome() {	
+	public String welcome() {
 		return "welcome/index";
 	}
 	
@@ -100,7 +100,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/create-account")
-	public String createAccount(Model model, @ModelAttribute("user") UserDTO userDTO){
+	public String createAccount(){
 		return "user/new-user";
 	}
 

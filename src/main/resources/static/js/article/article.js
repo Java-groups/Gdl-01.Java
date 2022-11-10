@@ -68,8 +68,11 @@ function validateRequiredInputs() {
 
 function saveArticle(){
     const form = document.querySelector("#article-form");
+    const spinner = document.querySelector("#spinner-loading");
     try {
         validateRequiredInputs();
+
+        spinner.style.display = "block";
 
         const bearerCookie = localStorage.getItem('bearer');
 
@@ -81,7 +84,7 @@ function saveArticle(){
         bodyFormData.append('headLine', form[9].value);
         bodyFormData.append('caption', form[10].value);
         bodyFormData.append('articleDescriptionHtml', tinymce.get("default").getContent());
-        bodyFormData.append('articleDescription', form[11].value);
+        bodyFormData.append('articleDescription', tinymce.get("default").getContent({format: 'text'}));
 
         axios.post("/api/article/new", bodyFormData, {
             headers: {
@@ -108,6 +111,8 @@ function saveArticle(){
         const divAlert = document.querySelector('#error-message');
         divAlert.innerHTML = e.message;
     }
+
+    spinner.style.display = "none";
 }
 
 function loadComboBox(){
