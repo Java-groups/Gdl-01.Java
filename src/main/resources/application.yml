@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     password: ${user_pwd}
     url: jdbc:postgresql://db.ihmqbphkncqwubmtymvu.supabase.co:5432/postgres
