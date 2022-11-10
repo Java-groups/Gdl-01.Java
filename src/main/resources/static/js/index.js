@@ -16,9 +16,12 @@ function submitForm(){
         body: JSON.stringify(jsonData)
     })
       .then((response) => response.json())
+
       .then((data) => {
         localStorage.setItem('bearer', data.token);
+        window.location.replace('/start');
       })
+
       .catch((error) => {
         console.error('Error:', error);
       });

@@ -86,10 +86,17 @@
 	<div th:replace="fragments/bootstrap-scripts :: bootstrap-scripts">
 	</div>
 
+	<script th:src="@{/js/axios.min.js}"></script>
+	<script th:src="@{/js/HTTP_UTILs.js}"></script>
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/tinymce.min.js}"></script>
 	<script th:src="@{/js/article/article.js}"></script>
 	<script th:src="@{/js/sweetalert.min.js}"></script>
+	<script>
+		$( document ).ready(function() {
+		  loadComboBox();
+		});
+	</script>
 </body>
 
 </html>
