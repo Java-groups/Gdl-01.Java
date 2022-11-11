@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -123,7 +124,7 @@ public class ArticleService {
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("message", Constants.ARTICLE_CREATED);
 		responseBody.put("articleId",article.getIdArticle());
-		return ResponseEntity.ok(responseBody);
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
 	}
 
 	private NewArticleDTO mapJsonToArticleDTO(Map<String, Object> json, MultipartFile articleImage) {
