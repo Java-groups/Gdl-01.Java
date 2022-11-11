@@ -4,7 +4,6 @@ import com.softserve.dto.PollDTO;
 import com.softserve.model.Poll;
 import com.softserve.model.PollAnswer;
 import com.softserve.repository.PollAnswerRepository;
-import com.softserve.repository.PollOptionRepository;
 import com.softserve.repository.PollRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +21,21 @@ public class PollService {
     private PollOptionService pollOptionService;
 
     @Autowired
-    private PollOptionRepository pollOptionRepository;
-
-    @Autowired
     private PollAnswerRepository pollAnswerRepository;
 
     ModelMapper mapper = new ModelMapper();
 
-    public void save(PollDTO pollDTO) {
-        Poll poll = mapper.map(pollDTO, Poll.class);
+    public PollDTO save(PollDTO pollDTO) {
+        PollDTO pollDTOResponse = null;
+        Poll poll = pollRepository.findById(pollDTO.getId()).orElse(new Poll());
+
+        poll = mapper.map(pollDTO, Poll.class);
         Poll pollAfterSave = pollRepository.save(poll);
         pollDTO.getPollOptions().forEach( element -> element.setPoll(pollAfterSave));
         pollOptionService.save(pollDTO.getPollOptions());
+
+        pollDTOResponse = mapper.map(pollAfterSave, PollDTO.class);
+        return pollDTOResponse;
     }
 
     public PollDTO getPoll(Integer id, String roleName) {
@@ -45,7 +47,9 @@ public class PollService {
         }
 
         if(roleName.equals("ROLE_ADMIN")) {
-            pollDTOResponse = mapper.map(poll, PollDTO.class);
+            if(poll.getStatus() != null && poll.getStatus() < 3) {
+                pollDTOResponse = mapper.map(poll, PollDTO.class);
+            }
         }
         else if(roleName.equals("ROLE_USER")) {
             if(poll.getStatus() != null && poll.getStatus() < 3) {
@@ -92,5 +96,13 @@ public class PollService {
 
     public PollAnswer savePollAnswer(PollAnswer pollAnswer) {
         return pollAnswerRepository.save(pollAnswer);
+    }
+
+    public void deletePoll(Integer id) {
+        Poll poll = pollRepository.findById(id).orElse(null);
+        if (poll != null) {
+            poll.setStatus(3);
+            pollRepository.save(poll);
+        }
     }
 }

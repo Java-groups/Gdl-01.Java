@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +21,29 @@ public class SurveyRestController {
     @Autowired
     PollService pollService;
 
+    @ApiOperation(
+            value = "Create new poll",
+            response = PollDTO.class,
+            notes = "Respective Poll must exist"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = PollDTO.class, responseContainer = "Poll"),
+            @ApiResponse(code = 500, message = "Internal server error", response = String.class)
+    })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @PostMapping(value = "/create", consumes = "application/json")
-    public void createSurvey(@RequestBody PollDTO pollDTO){
-        pollService.save(pollDTO);
+    public ResponseEntity<?> createSurvey(@RequestBody PollDTO pollDTO){
+        try {
+            PollDTO pollDTOResponse = pollService.save(pollDTO);
+
+            if (pollDTOResponse == null) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(pollDTOResponse);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @ApiOperation(
@@ -31,12 +52,41 @@ public class SurveyRestController {
             notes = "Respective Poll must exist"
     )
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK", response = PollDTO.class, responseContainer = "List"),
-            @ApiResponse(code = 204, message = "No records found in Poll list"),
-            @ApiResponse(code = 500, message = "Internal server error", response = String.class)})
+            @ApiResponse(code = 200, message = "OK", response = PollDTO.class, responseContainer = "Poll"),
+            @ApiResponse(code = 201, message = "Created", response = PollDTO.class, responseContainer = "Poll"),
+            @ApiResponse(code = 500, message = "Internal server error", response = String.class)
+    })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/update", consumes = "application/json")
-    public void updateSurvey(@RequestBody PollDTO pollDTO){
-        pollService.save(pollDTO);
+    public ResponseEntity<?> updateSurvey(@RequestBody PollDTO pollDTO){
+
+        try {
+            PollDTO pollDTOResponse = pollService.save(pollDTO);
+
+            if (pollDTOResponse == null) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(pollDTOResponse);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @ApiOperation(
+            value = "Delete a poll",
+            response = PollDTO.class,
+            notes = "Respective Poll must exist"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = PollDTO.class, responseContainer = "Poll"),
+            @ApiResponse(code = 500, message = "Internal server error", response = String.class)
+    })
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @DeleteMapping(value = "/delete/{id}", consumes = "application/json")
+    public ResponseEntity<?> deleteSurvey(@PathVariable Integer id){
+        pollService.deletePoll(id);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @ApiOperation(
@@ -48,6 +98,7 @@ public class SurveyRestController {
             @ApiResponse(code = 200, message = "OK", response = PollDTO.class, responseContainer = "List"),
             @ApiResponse(code = 204, message = "No records found in Poll list"),
             @ApiResponse(code = 500, message = "Internal server error", response = String.class)})
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @GetMapping()
     public ResponseEntity<?> getPolls (@RequestParam("roleName") String roleName) {
         try {
@@ -72,6 +123,7 @@ public class SurveyRestController {
             @ApiResponse(code = 200, message = "OK", response = PollDTO.class),
             @ApiResponse(code = 204, message = "No records found in Poll list"),
             @ApiResponse(code = 500, message = "Internal server error", response = String.class)})
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getPollById (@PathVariable Integer id, @RequestParam("roleName") String roleName) {
         try {
@@ -95,6 +147,7 @@ public class SurveyRestController {
             @ApiResponse(code = 200, message = "OK", response = PollAnswer.class),
             @ApiResponse(code = 500, message = "Internal server error", response = String.class)})
     @PostMapping("/answer")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public ResponseEntity<?> savePollAnswer(@RequestBody PollAnswer pollAnswer) {
         try{
             return ResponseEntity.status(HttpStatus.CREATED).body(pollService.savePollAnswer(pollAnswer));

@@ -84,27 +84,26 @@ function postSurvey(survey) {
 
 function save() {
     let survey = {
-        "poll": {
-            "question": "",
-            "userId": 1,
-            "pollOptions": [ ]
-        }
+        "question": "",
+        "userId": 1,
+        "pollOptions": [ ]
+
     };
 
     let question = document.querySelector('#questionText').value;
     let newOption = { };
 
-    survey.poll.creationDate = createDate();
-    survey.poll.closedDate = createDate();
-    survey.poll.modificationDate = createDate();
-    survey.poll.question = question;
+    survey.creationDate = createDate();
+    survey.closedDate = createDate();
+    survey.modificationDate = createDate();
+    survey.question = question;
 
     for (let i = 1; i <= counter; i++) {
         newOption = {
             "value": document.querySelector(`#optionText${i}`).value,
             "order": i
         };
-        survey.poll.pollOptions.push(newOption);
+        survey.pollOptions.push(newOption);
     }
 
     postSurvey(survey);
