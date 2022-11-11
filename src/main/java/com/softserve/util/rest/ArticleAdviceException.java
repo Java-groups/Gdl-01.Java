@@ -20,4 +20,13 @@ public class ArticleAdviceException {
         response.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> userRestControllerException(RuntimeException e) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", false);
+        response.put("code", HttpStatus.BAD_REQUEST);
+        response.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
