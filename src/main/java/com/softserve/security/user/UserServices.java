@@ -254,6 +254,7 @@ public class UserServices implements UserDetailsService {
 		if (!userDTO.getPassword().equals(userDTO.getConfirmPassword()))
 			throw new UserException("Your password must be equals");
 
+
 		if(Objects.isNull(userDTO.getFirstName()) ||userDTO.getFirstName().equals(""))
 			throw new UserException("The firstname is required");
 
@@ -261,6 +262,15 @@ public class UserServices implements UserDetailsService {
 			throw new UserException("The lastname is required");
 
 		if(Objects.isNull(userDTO.getEmail()) || userDTO.getEmail().equals(""))
+
+		if(userDTO.getFirstName().equals(""))
+			throw new UserException("The firstname is required");
+
+		if(userDTO.getLastName().equals(""))
+			throw new UserException("The lastname is required");
+
+		if(userDTO.getEmail().equals(""))
+    
 			throw new UserException("The email is required");
 
 	}
