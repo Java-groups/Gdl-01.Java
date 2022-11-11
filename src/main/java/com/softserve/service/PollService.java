@@ -27,9 +27,7 @@ public class PollService {
 
     public PollDTO save(PollDTO pollDTO) {
         PollDTO pollDTOResponse = null;
-        Poll poll = pollRepository.findById(pollDTO.getId()).orElse(new Poll());
-
-        poll = mapper.map(pollDTO, Poll.class);
+        Poll poll = mapper.map(pollDTO, Poll.class);
         Poll pollAfterSave = pollRepository.save(poll);
         pollDTO.getPollOptions().forEach( element -> element.setPoll(pollAfterSave));
         pollOptionService.save(pollDTO.getPollOptions());
