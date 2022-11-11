@@ -129,6 +129,27 @@ public class ArticleService {
 	private NewArticleDTO mapJsonToArticleDTO(Map<String, Object> json, MultipartFile articleImage) {
 
 		try {
+			if(Objects.isNull(json.get("subCategory")) || json.get("subCategory").toString().equals(""))
+				throw new ArticleException("Subcategory is required");
+
+			if(Objects.isNull(json.get("team")) || json.get("team").toString().equals(""))
+				throw new ArticleException("Team is required");
+
+			if(Objects.isNull(json.get("location")) || json.get("location").toString().equals(""))
+				throw new ArticleException("Location is required");
+
+			if(Objects.isNull(json.get("headLine")) || json.get("headLine").toString().equals(""))
+				throw new ArticleException("HeadLine is required");
+
+			if(Objects.isNull(json.get("caption")) || json.get("caption").toString().equals(""))
+				throw new ArticleException("Caption is required");
+
+			if(Objects.isNull(json.get("articleDescriptionHtml")) || json.get("articleDescriptionHtml").toString().equals(""))
+				throw new ArticleException("The article description is required");
+
+			if(Objects.isNull(json.get("articleDescription")) || json.get("articleDescription").toString().equals(""))
+				throw new ArticleException("The article description without html tag is required");
+
 			NewArticleDTO newArticleDTO = new NewArticleDTO();
 			newArticleDTO.setArticleImage(articleImage);
 			newArticleDTO.setTeam(Integer.parseInt(json.get("team").toString()));
