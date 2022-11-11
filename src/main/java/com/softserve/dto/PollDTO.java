@@ -20,6 +20,8 @@ public class PollDTO implements Serializable {
 
     private Integer userId;
 
+    private Integer status;
+
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp creationDate;
 
