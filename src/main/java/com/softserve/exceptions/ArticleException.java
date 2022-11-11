@@ -1,11 +1,9 @@
 package com.softserve.exceptions;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-public class ArticleException extends Exception{
+public class ArticleException extends RuntimeException{
     private String message;
 
     public ArticleException(String message){

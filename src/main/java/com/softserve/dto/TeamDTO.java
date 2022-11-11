@@ -16,6 +16,6 @@ public class TeamDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int idTeam;
+	private int id;
 	private String description;
 }

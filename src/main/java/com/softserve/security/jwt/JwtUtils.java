@@ -1,18 +1,23 @@
 package com.softserve.security.jwt;
 
-import com.softserve.security.user.UserDetailsImpl;
-import io.jsonwebtoken.*;
+import com.softserve.exceptions.CustomException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.Cookie;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -28,13 +33,10 @@ public class JwtUtils {
     @Value("${jwt.cookie-name}")
     private String jwtCookie;
 
-    public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
-            return cookie.getValue();
-        } else {
-            return null;
-        }
+    public String getJwtFromAuthorization(HttpServletRequest request) {
+        final String authorization = request.getHeader("Authorization");
+        final String BEARER_KEYWORD= "Bearer ";
+        return Objects.isNull(authorization) || authorization.equals("") ? null : authorization.replace(BEARER_KEYWORD,"");
     }
 
     public String generateJwtCookie(String userPrincipal) {
@@ -50,7 +52,7 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken, HttpServletRequest request) throws ServletException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
@@ -59,7 +61,9 @@ public class JwtUtils {
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
+            request.logout();
             log.error("JWT token is expired: {}", e.getMessage());
+            throw new CustomException("Your authorization has expired, please, send another request for new access", HttpStatus.UNAUTHORIZED.value());
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {

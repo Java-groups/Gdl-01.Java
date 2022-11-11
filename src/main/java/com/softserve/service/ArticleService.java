@@ -1,25 +1,22 @@
 package com.softserve.service;
 
-import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.softserve.exceptions.ArticleException;
 import com.softserve.model.Team;
 import com.softserve.model.User;
 import com.softserve.security.user.UserServices;
+import com.softserve.util.Constants;
 import com.softserve.util.FireBaseProcess;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,7 @@ import com.softserve.dto.NewArticleDTO;
 import com.softserve.dto.TeamDTO;
 import com.softserve.model.Article;
 import com.softserve.repository.IArticleRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ArticleService {
@@ -113,6 +111,41 @@ public class ArticleService {
 
 	}
 
+	/**
+	 *
+	 * @param json
+	 * @return Article saved
+	 */
+	public ResponseEntity<?> saveArticle(Map<String, Object> json, MultipartFile articleImage) throws ArticleException {
+		final NewArticleDTO newArticleDTO = mapJsonToArticleDTO(json, articleImage);
+		final Article article = loadArticle(newArticleDTO);
+
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("message", Constants.ARTICLE_CREATED);
+		responseBody.put("articleId",article.getIdArticle());
+		return ResponseEntity.ok(responseBody);
+	}
+
+	private NewArticleDTO mapJsonToArticleDTO(Map<String, Object> json, MultipartFile articleImage) {
+
+		try {
+			NewArticleDTO newArticleDTO = new NewArticleDTO();
+			newArticleDTO.setArticleImage(articleImage);
+			newArticleDTO.setTeam(Integer.parseInt(json.get("team").toString()));
+			newArticleDTO.setSubCategory(Integer.parseInt(json.get("subCategory").toString()));
+			newArticleDTO.setLocation(Integer.parseInt(json.get("location").toString()));
+			newArticleDTO.setHeadLine(json.get("headLine").toString());
+			newArticleDTO.setCaption(json.get("caption").toString());
+			newArticleDTO.setArticleDescriptionHtml(json.get("articleDescriptionHtml").toString());
+			newArticleDTO.setArticleDescription(json.get("articleDescription").toString());
+			return newArticleDTO;
+		}catch (NumberFormatException i){
+			log.error("Number format exception -> {}", i);
+			throw new ArticleException("Something went wrong when Article was saving");
+		}
+
+	}
+
 	private Article loadArticle(NewArticleDTO newArticleDTO) throws ArticleException{
 
 		if(newArticleDTO.getArticleDescriptionHtml().equals(""))
@@ -125,7 +158,7 @@ public class ArticleService {
 		article.setCreationDate(Timestamp.from(Instant.now()));
 		article.setModificationDate(Timestamp.from(Instant.now()));
 		article.setDescriptionHtml(newArticleDTO.getArticleDescriptionHtml());
-		article.setDescription(newArticleDTO.getArticleDescriptionHtml());
+		article.setDescription(newArticleDTO.getArticleDescription());
 		article.setIsCommentable(true);
 		article.setStatus(1);
 		final Optional<Team> teamOptional = this.teamService.finById(newArticleDTO.getTeam());
@@ -159,4 +192,25 @@ public class ArticleService {
 		model.addAttribute("articleListMostCommented", top3Commented);
 		model.addAttribute("articleListMostLiked", top3Liked);
     }
+
+	public ResponseEntity<?> loadNewArticleContentApi() {
+
+		final List<TeamDTO> teamList = this.teamService.findAll().stream().map(team ->
+				new TeamDTO(team.getIdTeam(), team.getDescription())
+		).collect(Collectors.toList());
+
+		final List<LocationDTO> locationList = this.locationService.findAll().stream().map(location ->
+						new LocationDTO(location.getIdLocation(), location.getDescription()))
+				.collect(Collectors.toList());
+		List<TeamDTO> categoriesList = this.categoryService.findByIdParentCategoryIsNull().stream()
+				.map(category ->
+						new TeamDTO(category.getIdCategory(), category.getName())
+				).collect(Collectors.toList());
+
+		Map<String, Object> list = new HashMap<>();
+		list.put("categories", categoriesList);
+		list.put("locations", locationList);
+		list.put("teams", teamList);
+		return ResponseEntity.ok(list);
+	}
 }

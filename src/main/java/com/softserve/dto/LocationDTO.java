@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LocationDTO {
 
-	private int idLocation;
+	private int id;
 	
 	private String description;
 }

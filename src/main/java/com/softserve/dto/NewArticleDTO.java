@@ -31,6 +31,8 @@ public class NewArticleDTO implements Serializable{
 	private String caption;
 	
 	private String articleDescriptionHtml;
+
+	private String articleDescription;
 	
 
 }

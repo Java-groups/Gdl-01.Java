@@ -1,6 +1,8 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
+  mvc:
+    path_match:
+      matching-strategy: ant_path_matcher
+
   datasource:
     password: ${user_pwd}
     url: jdbc:postgresql://db.ihmqbphkncqwubmtymvu.supabase.co:5432/postgres
@@ -43,7 +45,9 @@ firebase:
 jwt:
   cookie-name: sportHubApp
   jwt-secret: 481feeda07bb83b4db5f3ac5624918b3ad340d3b64e38df84fc7e0abda57a703
-  jwt-expiration: 60000
+  jwt-expiration: 18000000
+
+origin: http://localhost:8080
 
 token-wrong: Something wrong with your token, please send another forgot password request.
 code-expired:  Your secure code has expired.
