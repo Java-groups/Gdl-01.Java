@@ -14,7 +14,7 @@
 	href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <link rel="stylesheet" th:href="@{/css/style.css}">
-
+	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -34,6 +34,10 @@
 								<h2>Welcome to Sport Hub login</h2>
 								<p>Don't have an account?</p>
 								<a th:href="@{/create-account}" class="btn btn-white btn-outline-white">Sign Up</a>
+								<div class="">
+									<i class="fa fa-github-square github" id="github"></i>
+									With GitHub: <a href="/oauth2/authorization/github" style="color: black">click here</a>
+								</div>
 							</div>
 						</div>
 						<div class="login-wrap p-4 p-lg-5">
@@ -91,11 +95,38 @@
 			</div>
 		</div>
 	</section>
-
 	<script th:src="@{/js/jquery.min.js}" type="text/javascript"></script>
 	<script th:src="@{/js/popper.js}"></script>
 	<script th:src="@{/js/bootstrap.min.js}"></script>
 	<script th:src="@{/js/main.js}"></script>
 	<script th:src="@{/js/index.js}"></script>
+	<script type="text/javascript"
+			src="/webjars/js-cookie/js.cookie.js"></script>
+	<script type="text/javascript">
+		$
+				.ajaxSetup({
+					beforeSend : function(xhr, settings) {
+						if (settings.type == 'POST' || settings.type == 'PUT'
+								|| settings.type == 'DELETE') {
+							if (!(/^http:.*/.test(settings.url) || /^https:.*/
+									.test(settings.url))) {
+								// Only send the token to relative URLs i.e. locally.
+								xhr.setRequestHeader("X-XSRF-TOKEN",
+										Cookies.get('XSRF-TOKEN'));
+							}
+						}
+					}
+				});
+		$.get("/user", function(data) {
+			$("#user").html(data.name);
+		});
+		var logout = function() {
+			$.post("/logout", function() {
+				$("#user").html('');
+			})
+			return true;
+		}
+	</script>
+
 </body>
 </html>

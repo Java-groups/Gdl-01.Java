@@ -6,6 +6,7 @@ import com.softserve.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,7 +17,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.softserve.security.user.UserServices;
@@ -56,12 +59,12 @@ public class SecurityConfiguration {
 	}
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable().
+		/*httpSecurity.csrf().disable().
 			exceptionHandling().
 			authenticationEntryPoint(authEntryPointJwt).
 			and().
 			authorizeRequests().
-			antMatchers("/**", "/js/**", "/css/**", "/img/**").
+			antMatchers("/**", "/js/**", "/css/**", "/img/**","/", "/error", "/webjars/**").
 			permitAll().
 			anyRequest()
 			.authenticated().
@@ -76,7 +79,22 @@ public class SecurityConfiguration {
 			logoutRequestMatcher(new AntPathRequestMatcher("/close")).
 			logoutSuccessUrl("/").
 			permitAll().and()
-			.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+			.exceptionHandling().accessDeniedHandler(accessDeniedHandler());*/
+		httpSecurity
+				.authorizeRequests(a -> a
+						.antMatchers("/**", "/js/**", "/css/**", "/img/**","/", "/error", "/webjars/**").permitAll()
+						.anyRequest().authenticated()
+				)
+				.exceptionHandling(e -> e
+						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+				)
+				.csrf(c -> c
+						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				)
+				.logout(l -> l
+						.logoutSuccessUrl("/").permitAll()
+				)
+				.oauth2Login().defaultSuccessUrl("/homeArticle").failureUrl("/");
 
 		httpSecurity.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();

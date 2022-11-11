@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
-    <head th:replace="fragments/header :: head"> </head>
+    <head th:replace="fragments/header :: head">
+        <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
 
     <body id="page-top">
 
@@ -75,7 +78,7 @@
                     <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" th:href="@{/close}">Logout</a>
+                        <a class="btn btn-primary" onClick="logout()">Logout</a>
                     </div>
                 </div>
             </div>
@@ -84,5 +87,34 @@
         <!-- bootstrap scripts -->
         <div th:replace="fragments/bootstrap-scripts :: bootstrap-scripts"> </div>
     </body>
+    <script type="text/javascript"
+            src="/webjars/js-cookie/js.cookie.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        $
+            .ajaxSetup({
+                beforeSend : function(xhr, settings) {
+                    if (settings.type == 'POST' || settings.type == 'PUT'
+                        || settings.type == 'DELETE') {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                            .test(settings.url))) {
+                            // Only send the token to relative URLs i.e. locally.
+                            xhr.setRequestHeader("X-XSRF-TOKEN",
+                                Cookies.get('XSRF-TOKEN'));
+                        }
+                    }
+                }
+            });
+        $.get("/user", function(data) {
+            $("#user").html(data.name);
+        });
+        var logout = function() {
+            $.post("/logout", function() {
+                $("#user").html('');
+                window.location.href = "/";
+            })
+            return true;
+        }
+    </script>
 
 </html>

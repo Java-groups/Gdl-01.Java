@@ -1,4 +1,11 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ab7e71463641e463954b
+            client-secret: 4842ef9cb45827e281a7902693f1d5c927ca268e
   mvc:
     path_match:
       matching-strategy: ant_path_matcher

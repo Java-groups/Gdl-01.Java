@@ -52,7 +52,7 @@
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user">Douglas McGee</span>
                     <img class="img-profile rounded-circle"
                          src="/static/img/undraw_profile.svg">
                 </a>
@@ -82,4 +82,33 @@
         </ul>
     </nav>
 </body>
+<script type="text/javascript"
+        src="/webjars/js-cookie/js.cookie.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $
+        .ajaxSetup({
+            beforeSend : function(xhr, settings) {
+                if (settings.type == 'POST' || settings.type == 'PUT'
+                    || settings.type == 'DELETE') {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                        .test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-XSRF-TOKEN",
+                            Cookies.get('XSRF-TOKEN'));
+                    }
+                }
+            }
+        });
+    $.get("/user", function(data) {
+        $("#user").html(data.name);
+    });
+    var logout = function() {
+        $.post("/logout", function() {
+            $("#user").html('');
+            window.location.href = "/";
+        })
+        return true;
+    }
+</script>
 </html>
