@@ -14,13 +14,14 @@ import java.util.stream.Collectors;
 import javax.mail.MessagingException;
 
 import com.softserve.dto.UserDTO;
+import com.softserve.exceptions.ArticleException;
+import com.softserve.exceptions.CustomException;
 import com.softserve.exceptions.UserException;
-import com.softserve.util.AuthoritiesMap;
-import com.softserve.util.HtmlTemplate;
-import com.softserve.util.ThymeleafAttributes;
+import com.softserve.util.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,7 +44,6 @@ import com.softserve.model.User;
 import com.softserve.repository.IUserRepository;
 import com.softserve.service.RequestService;
 import com.softserve.service.TokenService;
-import com.softserve.util.EmailService;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -222,22 +222,36 @@ public class UserServices implements UserDetailsService {
     }
 
 	private void loadAndSaveUSer(UserDTO userDTO) {
-		User user = new User();
-		final Timestamp now = Timestamp.from(Instant.now());
-		final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
- 		user.setFirstName(userDTO.getFirstName());
-		user.setEmail(userDTO.getEmail());
-		user.setLastName(userDTO.getLastName());
-		user.setStatus((byte) 1);
-		user.setModificationDate(now);
-		user.setCreationDate(now);
-		user.setUserPassword(encoder.encode(userDTO.getPassword()));
+		if(this.userRepository.findByEmail(userDTO.getEmail()).isPresent())
+			throw new UserException("The email already exists");
 
-		this.userRepository.save(user);
+		try{
+			User user = new User();
+			final Timestamp now = Timestamp.from(Instant.now());
+			final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+			user.setFirstName(userDTO.getFirstName());
+			user.setEmail(userDTO.getEmail());
+			user.setLastName(userDTO.getLastName());
+			user.setStatus((byte) 1);
+			user.setModificationDate(now);
+			user.setCreationDate(now);
+			user.setUserPassword(encoder.encode(userDTO.getPassword()));
+
+			this.userRepository.save(user);
+		}catch (Exception e){
+			throw new UserException("Something went wrong, please, contact your admin.");
+		}
 	}
 
 	private void validateNewUser(UserDTO userDTO) throws UserException {
+
+		if (!userDTO.getPassword().equals(userDTO.getConfirmPassword()))
+			throw new UserException("Your password must be equals");
+	}
+
+	private void validateNewUserCustomException(UserDTO userDTO) throws UserException {
 
 		if (!userDTO.getPassword().equals(userDTO.getConfirmPassword()))
 			throw new UserException("Your password must be equals");
@@ -306,5 +320,25 @@ public class UserServices implements UserDetailsService {
 		if(!resetPasswordDTO.getNewPassword().equals(resetPasswordDTO.getRepeatNewPassword())) {
 			throw new ForgotPasswordProcessException("Your new password are not the same");
 		}
+	}
+
+    public ResponseEntity<?> saveAccount(Map<String, String> json) {
+		final UserDTO userDTO = mapToJsonUser(json);
+		validateNewUserCustomException(userDTO);
+		loadAndSaveUSer(userDTO);
+
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("message", this.accountCreated);
+		return ResponseEntity.ok(responseBody);
+    }
+
+	private UserDTO mapToJsonUser(Map<String, String> json) {
+		UserDTO userDTO = new UserDTO();
+		userDTO.setFirstName(json.get("firstname"));
+		userDTO.setLastName(json.get("lastname"));
+		userDTO.setEmail(json.get("email"));
+		userDTO.setPassword(json.get("password"));
+		userDTO.setConfirmPassword(json.get("confirmPassword"));
+		return userDTO;
 	}
 }

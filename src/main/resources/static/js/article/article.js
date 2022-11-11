@@ -77,12 +77,12 @@ function saveArticle(){
         const bearerCookie = localStorage.getItem('bearer');
 
         let bodyFormData = new FormData();
-        bodyFormData.append('articleImage', form[3].files[0], form[3].files[0].name);
-        bodyFormData.append('subCategory', form[5].value);
-        bodyFormData.append('team', form[6].value);
-        bodyFormData.append('location', form[7].value);
-        bodyFormData.append('headLine', form[9].value);
-        bodyFormData.append('caption', form[10].value);
+        bodyFormData.append('articleImage', form[4].files[0], form[4].files[0].name);
+        bodyFormData.append('subCategory', form[6].value);
+        bodyFormData.append('team', form[7].value);
+        bodyFormData.append('location', form[8].value);
+        bodyFormData.append('headLine', form[10].value);
+        bodyFormData.append('caption', form[11].value);
         bodyFormData.append('articleDescriptionHtml', tinymce.get("default").getContent());
         bodyFormData.append('articleDescription', tinymce.get("default").getContent({format: 'text'}));
 

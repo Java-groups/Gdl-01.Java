@@ -12,7 +12,7 @@ function saveUser(){
     bodyFormData.append('password', userForm[3].value);
     bodyFormData.append('confirmPassword', userForm[4].value);
 
-    sendRequest('/create-account').then(data => {
+    sendRequest('/api/user/create-account', bodyFormData).then(data => {
         const divAlert = document.querySelector('#error-message');
         divAlert.innerHTML = "";
 
