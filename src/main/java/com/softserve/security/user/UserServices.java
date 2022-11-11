@@ -5,10 +5,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.mail.MessagingException;
@@ -21,6 +18,7 @@ import com.softserve.util.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.GrantedAuthority;
@@ -256,13 +254,13 @@ public class UserServices implements UserDetailsService {
 		if (!userDTO.getPassword().equals(userDTO.getConfirmPassword()))
 			throw new UserException("Your password must be equals");
 
-		if(userDTO.getFirstName().equals(""))
+		if(Objects.isNull(userDTO.getFirstName()) ||userDTO.getFirstName().equals(""))
 			throw new UserException("The firstname is required");
 
-		if(userDTO.getLastName().equals(""))
+		if(Objects.isNull(userDTO.getLastName()) || userDTO.getLastName().equals(""))
 			throw new UserException("The lastname is required");
 
-		if(userDTO.getEmail().equals(""))
+		if(Objects.isNull(userDTO.getEmail()) || userDTO.getEmail().equals(""))
 			throw new UserException("The email is required");
 
 	}
@@ -339,7 +337,7 @@ public class UserServices implements UserDetailsService {
 
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("message", this.accountCreated);
-		return ResponseEntity.ok(responseBody);
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
 	private UserDTO mapToJsonUser(Map<String, String> json) {
