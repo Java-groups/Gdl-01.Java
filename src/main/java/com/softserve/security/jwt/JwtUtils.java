@@ -58,19 +58,21 @@ public class JwtUtils {
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
+            throw new CustomException(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
+            throw new CustomException(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
         } catch (ExpiredJwtException e) {
             request.logout();
             log.error("JWT token is expired: {}", e.getMessage());
             throw new CustomException("Your authorization has expired, please, send another request for new access", HttpStatus.UNAUTHORIZED.value());
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
+            throw new CustomException(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
+            throw new CustomException(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
         }
-
-        return false;
     }
 
     public String generateTokenFromUsername(String username) {
